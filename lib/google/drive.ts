@@ -2,15 +2,12 @@ import { google } from "googleapis";
 
 /**
  * Simple in-memory cache for folder images
- * Key   → folderName (e.g. "PROP 001")
- * Value → images + expiry timestamp
  */
 const imageCache = new Map<
   string,
   { images: string[]; expiresAt: number }
 >();
 
-// Cache duration: 10 minutes
 const CACHE_TTL = 1000 * 60 * 10;
 
 /**
@@ -36,19 +33,25 @@ function getDriveClient() {
 }
 
 /**
- * Fetch all images inside:
+ * Fetch images from:
  * ROOT_FOLDER / <folderName>
- *
- * Returns TRUE raw image URLs (Next.js compatible)
  */
 export async function getImagesFromFolder(
   folderName: string
 ): Promise<string[]> {
   try {
-    // 🔹 0️⃣ Check cache first
+    // ✅ HARD BLOCK invalid folder names
+    if (
+      !folderName ||
+      folderName === "." ||
+      folderName === "-" ||
+      folderName.trim() === ""
+    ) {
+      return [];
+    }
+
     const now = Date.now();
     const cached = imageCache.get(folderName);
-
     if (cached && cached.expiresAt > now) {
       return cached.images;
     }
@@ -57,49 +60,43 @@ export async function getImagesFromFolder(
     const rootFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
 
     if (!rootFolderId) {
-      throw new Error("Missing GOOGLE_DRIVE_FOLDER_ID");
+      return [];
     }
 
-    // 1️⃣ Find subfolder (PROP 001, PROP 002, etc.)
     const folderRes = await drive.files.list({
       q: `'${rootFolderId}' in parents 
           and name='${folderName}' 
           and mimeType='application/vnd.google-apps.folder' 
           and trashed=false`,
-      fields: "files(id, name)",
+      fields: "files(id)",
     });
 
     const folder = folderRes.data.files?.[0];
-
     if (!folder?.id) {
       return [];
     }
 
-    // 2️⃣ Fetch image files only
     const imagesRes = await drive.files.list({
       q: `'${folder.id}' in parents 
           and mimeType contains 'image/' 
           and trashed=false`,
-      fields: "files(id, name)",
+      fields: "files(id)",
       orderBy: "name",
       pageSize: 50,
     });
 
-    // 3️⃣ Convert to RAW image URLs
     const images =
-      imagesRes.data.files?.map((file) => {
-        return `https://lh3.googleusercontent.com/d/${file.id}=w2000`;
-      }) ?? [];
+      imagesRes.data.files?.map(
+        (file) => `https://lh3.googleusercontent.com/d/${file.id}=w2000`
+      ) ?? [];
 
-    // 🔹 4️⃣ Store in cache
     imageCache.set(folderName, {
       images,
       expiresAt: now + CACHE_TTL,
     });
 
     return images;
-  } catch (err) {
-    console.error("❌ Error fetching images from Drive:", err);
+  } catch {
     return [];
   }
 }
