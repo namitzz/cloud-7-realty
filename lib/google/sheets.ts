@@ -13,9 +13,6 @@ export interface SheetProperty {
   featured: boolean;
 }
 
-/**
- * Creates a Google Sheets client using a service account
- */
 function getSheetsClient() {
   const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
   const key = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n");
@@ -35,10 +32,6 @@ function getSheetsClient() {
   return google.sheets({ version: "v4", auth });
 }
 
-/**
- * Fetch properties from Google Sheets
- * and attach Google Drive images (IMAGE FLODER column)
- */
 export async function fetchPropertiesFromSheet(): Promise<SheetProperty[]> {
   const sheets = getSheetsClient();
 
@@ -52,14 +45,18 @@ export async function fetchPropertiesFromSheet(): Promise<SheetProperty[]> {
 
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId,
-    range: "Projects!A2:I", // A–I (IMAGE FLODER = G, FEATURED = I)
+    range: "Projects!A2:I",
   });
 
   const rows = res.data.values ?? [];
 
   return Promise.all(
     rows.map(async (row) => {
-      const folderName = row[6]?.toString().trim(); // IMAGE FLODER (column G)
+      const rawFolder = row[6]?.toString().trim();
+      const folderName =
+        rawFolder && rawFolder !== "." && rawFolder !== "-"
+          ? rawFolder
+          : null;
 
       const rawFeatured = row[8];
       const featured =
@@ -77,7 +74,6 @@ export async function fetchPropertiesFromSheet(): Promise<SheetProperty[]> {
         status: row[4]?.toString().trim() ?? "",
         price: row[5]?.toString().trim() ?? "",
 
-        // ✅ Google Drive images wired here
         images: folderName
           ? await getImagesFromFolder(folderName)
           : [],
