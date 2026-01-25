@@ -33,6 +33,8 @@ export default function PropertyCard({
   const displayImage =
     images?.[0] || imageUrl || coverImage || "/placeholder.jpg";
 
+  console.log("IMAGE URL →", displayImage);
+
   const statusColors: Record<PropertyStatus, string> = {
     Buy: "bg-green-500",
     Rent: "bg-blue-500",
