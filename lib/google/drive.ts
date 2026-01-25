@@ -1,6 +1,19 @@
 import { google } from "googleapis";
 
 /**
+ * Simple in-memory cache for folder images
+ * Key   → folderName (e.g. "PROP 001")
+ * Value → images + expiry timestamp
+ */
+const imageCache = new Map<
+  string,
+  { images: string[]; expiresAt: number }
+>();
+
+// Cache duration: 10 minutes
+const CACHE_TTL = 1000 * 60 * 10;
+
+/**
  * Creates a Google Drive client using a service account
  */
 function getDriveClient() {
@@ -32,6 +45,14 @@ export async function getImagesFromFolder(
   folderName: string
 ): Promise<string[]> {
   try {
+    // 🔹 0️⃣ Check cache first
+    const now = Date.now();
+    const cached = imageCache.get(folderName);
+
+    if (cached && cached.expiresAt > now) {
+      return cached.images;
+    }
+
     const drive = getDriveClient();
     const rootFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
 
@@ -39,8 +60,7 @@ export async function getImagesFromFolder(
       throw new Error("Missing GOOGLE_DRIVE_FOLDER_ID");
     }
 
-
-    // 1️⃣ Find subfolder
+    // 1️⃣ Find subfolder (PROP 001, PROP 002, etc.)
     const folderRes = await drive.files.list({
       q: `'${rootFolderId}' in parents 
           and name='${folderName}' 
@@ -68,10 +88,14 @@ export async function getImagesFromFolder(
     // 3️⃣ Convert to RAW image URLs
     const images =
       imagesRes.data.files?.map((file) => {
-        // ✅ THIS IS THE FIX
         return `https://lh3.googleusercontent.com/d/${file.id}=w2000`;
       }) ?? [];
 
+    // 🔹 4️⃣ Store in cache
+    imageCache.set(folderName, {
+      images,
+      expiresAt: now + CACHE_TTL,
+    });
 
     return images;
   } catch (err) {
