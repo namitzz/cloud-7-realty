@@ -42,18 +42,9 @@ export default function PropertyCard({
   return (
     <Link
       href={`/properties/${slug}`}
-      className="
-        group
-        block
-        rounded-2xl
-        overflow-hidden
-        bg-white
-        border border-luxury-gold/10
-        transition-all duration-300 ease-out
-        hover:border-luxury-gold/30
-        hover:shadow-xl
-        focus:outline-none
-      "
+      className="group block rounded-2xl overflow-hidden bg-white
+        border border-luxury-gold/10 transition-all duration-300
+        hover:border-luxury-gold/30 hover:shadow-xl"
     >
       {/* Image */}
       <div className="relative aspect-[3/2] overflow-hidden bg-neutral-200">
@@ -61,14 +52,13 @@ export default function PropertyCard({
           src={displayImage}
           alt={title}
           fill
+          unoptimized
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
         />
 
-        {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
-        {/* Chips */}
         <div className="absolute top-4 left-4 flex gap-2 pointer-events-none">
           <span className="px-3 py-1 text-xs rounded-full bg-white/90 text-luxury-navy font-medium">
             {location}
@@ -83,7 +73,6 @@ export default function PropertyCard({
 
       {/* Content */}
       <div className="p-5 sm:p-6">
-        {/* Price & Size */}
         <div className="flex items-center gap-3 mb-3">
           <span className="font-bold text-2xl sm:text-3xl text-luxury-gold">
             ₹{price}
@@ -108,7 +97,6 @@ export default function PropertyCard({
           </p>
         )}
 
-        {/* CTAs */}
         <div className="flex gap-3">
           <span className="btn btn-primary flex-1 text-sm pointer-events-none">
             Enquire
