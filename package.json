@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Cloud Seven Realty - Real estate projects and properties platform",
   "private": true,
-  "main": "index.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build --no-lint",
