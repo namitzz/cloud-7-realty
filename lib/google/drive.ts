@@ -86,9 +86,10 @@ export async function getImagesFromFolder(
     });
 
     const images =
-      imagesRes.data.files?.map(
-        (file) => `https://lh3.googleusercontent.com/d/${file.id}=w2000`
-      ) ?? [];
+  imagesRes.data.files?.map(
+    (file) => `https://drive.google.com/uc?export=view&id=${file.id}`
+  ) ?? [];
+
 
     imageCache.set(folderName, {
       images,
