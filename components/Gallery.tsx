@@ -13,7 +13,6 @@ export default function Gallery({ images }: GalleryProps) {
   const modalRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef<number | null>(null);
 
-  /* ------------------ helpers ------------------ */
   const openAt = (i: number) => {
     setIndex(i);
     setOpen(true);
@@ -23,7 +22,6 @@ export default function Gallery({ images }: GalleryProps) {
   const next = () => setIndex((i) => (i + 1) % images.length);
   const prev = () => setIndex((i) => (i - 1 + images.length) % images.length);
 
-  /* ------------------ body lock ------------------ */
   useEffect(() => {
     if (open) {
       document.body.style.overflow = "hidden";
@@ -36,14 +34,12 @@ export default function Gallery({ images }: GalleryProps) {
     };
   }, [open]);
 
-  /* ------------------ keyboard ------------------ */
   const onKey = (e: React.KeyboardEvent) => {
     if (e.key === "Escape") close();
     if (e.key === "ArrowRight") next();
     if (e.key === "ArrowLeft") prev();
   };
 
-  /* ------------------ swipe ------------------ */
   const onTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
@@ -56,37 +52,32 @@ export default function Gallery({ images }: GalleryProps) {
     touchStartX.current = null;
   };
 
+  if (!images.length) return null;
+
   return (
     <>
-      {/* ================= GRID ================= */}
+      {/* GRID */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 auto-rows-[180px]">
         {images.map((img, i) => (
           <button
             key={i}
             onClick={() => openAt(i)}
-            className={`
-              relative overflow-hidden rounded-xl bg-neutral-200 group
-              focus:outline-none focus:ring-2 focus:ring-luxury-gold
-              ${i === 0 ? "col-span-2 row-span-2" : ""}
-            `}
+            className={`relative overflow-hidden rounded-xl bg-neutral-200 group
+              ${i === 0 ? "col-span-2 row-span-2" : ""}`}
           >
             <Image
               src={img.url}
               alt={img.alt}
               fill
+              unoptimized
               sizes="(max-width: 768px) 100vw, 50vw"
-              className="
-                object-cover
-                transition-transform duration-700 ease-out
-                group-hover:scale-[1.035]
-              "
+              className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
             />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
           </button>
         ))}
       </div>
 
-      {/* ================= LIGHTBOX ================= */}
+      {/* LIGHTBOX */}
       {open && (
         <div
           ref={modalRef}
@@ -97,79 +88,51 @@ export default function Gallery({ images }: GalleryProps) {
           onClick={close}
           onTouchStart={onTouchStart}
           onTouchEnd={onTouchEnd}
-          className="
-            fixed inset-0 z-[100]
-            flex items-center justify-center
-            bg-black/90 backdrop-blur-sm
-            animate-[fadeIn_.25s_ease-out]
-          "
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90"
         >
-          {/* Close */}
           <button
             onClick={close}
-            className="
-              absolute top-6 right-6
-              text-white/70 hover:text-white
-              text-2xl transition
-            "
-            aria-label="Close"
+            className="absolute top-6 right-6 text-white text-2xl"
           >
             ✕
           </button>
 
-          {/* Prev */}
           <button
             onClick={(e) => {
               e.stopPropagation();
               prev();
             }}
-            className="
-              absolute left-6
-              text-white/70 hover:text-white
-              text-4xl transition
-            "
-            aria-label="Previous"
+            className="absolute left-6 text-white text-4xl"
           >
             ‹
           </button>
 
-          {/* Image */}
           <div
-            className="
-              relative w-full max-w-6xl h-[85vh]
-              mx-10
-              animate-[zoomIn_.25s_ease-out]
-            "
+            className="relative w-full max-w-6xl h-[85vh]"
             onClick={(e) => e.stopPropagation()}
           >
             <Image
               src={images[index].url}
               alt={images[index].alt}
               fill
+              unoptimized
               priority
               sizes="100vw"
               className="object-contain"
             />
           </div>
 
-          {/* Next */}
           <button
             onClick={(e) => {
               e.stopPropagation();
               next();
             }}
-            className="
-              absolute right-6
-              text-white/70 hover:text-white
-              text-4xl transition
-            "
-            aria-label="Next"
+            className="absolute right-6 text-white text-4xl"
           >
             ›
           </button>
 
-          {/* Counter */}
-          <div className="absolute bottom-6 text-white/60 text-sm tracking-wide">
+          <div className="absolute bottom-6 text-white text-sm">
             {index + 1} / {images.length}
           </div>
         </div>
