@@ -13,11 +13,17 @@ interface Props {
 }
 
 /* ----------------------------------
-   Static params
+   Static params (SAFE)
 ----------------------------------- */
 export async function generateStaticParams() {
-  const properties = await getAllProperties();
-  return properties.map((p) => ({ slug: p.slug }));
+  // ⚠️ IMPORTANT:
+  // This MUST be lightweight.
+  // Do NOT trigger Google Drive here.
+  const properties = await getAllProperties({ slugsOnly: true });
+
+  return properties.map((p) => ({
+    slug: p.slug,
+  }));
 }
 
 /* ----------------------------------
@@ -77,12 +83,10 @@ export default async function PropertyDetailPage({ params }: Props) {
           className="object-cover"
         />
 
-        {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
 
         <div className="relative h-full flex items-end">
           <div className="container-custom pb-14 text-white">
-            {/* Status chip */}
             <span className="inline-block mb-4 px-4 py-1.5 rounded-full bg-white/15 backdrop-blur text-sm font-medium">
               {property.status}
             </span>
@@ -113,9 +117,7 @@ export default async function PropertyDetailPage({ params }: Props) {
       {/* CONTENT */}
       <div className="container-custom py-14 sm:py-20">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-14">
-          {/* MAIN */}
           <div className="lg:col-span-2 space-y-16">
-            {/* Gallery */}
             <section>
               <h2 className="text-2xl sm:text-3xl font-serif font-semibold mb-6">
                 Gallery
@@ -130,7 +132,6 @@ export default async function PropertyDetailPage({ params }: Props) {
               )}
             </section>
 
-            {/* Description */}
             {property.description && (
               <section>
                 <h2 className="text-2xl sm:text-3xl font-serif font-semibold mb-6">
@@ -144,7 +145,6 @@ export default async function PropertyDetailPage({ params }: Props) {
             )}
           </div>
 
-          {/* SIDEBAR */}
           <aside className="lg:col-span-1">
             <div className="sticky top-24 rounded-2xl border border-luxury-gold/20 bg-white p-6 shadow-sm">
               <h3 className="text-xl font-serif font-semibold mb-6 text-luxury-navy">
@@ -180,7 +180,6 @@ export default async function PropertyDetailPage({ params }: Props) {
         </div>
       </div>
 
-      {/* FAB */}
       <EnquiryFAB
         propertyTitle={property.title}
         propertySlug={property.slug}
