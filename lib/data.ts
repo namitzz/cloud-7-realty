@@ -34,22 +34,22 @@ export async function getAllProperties(): Promise<Property[]> {
   const CACHE_KEY = "all-properties";
   const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
-  // Serve from cache if available
   const cached = getCache<Property[]>(CACHE_KEY);
-  if (cached) {
-    return cached;
-  }
+  if (cached) return cached;
 
   try {
     const rows = await fetchPropertiesFromSheet();
     const validStatuses: PropertyStatus[] = ["Buy", "Rent", "Land"];
 
     const properties: Property[] = rows.map((row) => {
-      const normalizedStatus = validStatuses.includes(
-        row.status as PropertyStatus
-      )
-        ? (row.status as PropertyStatus)
-        : "Buy";
+      const normalizedStatus =
+        row.status === "RENTAL"
+          ? "Rent"
+          : row.status === "SALE"
+          ? "Buy"
+          : validStatuses.includes(row.status as PropertyStatus)
+          ? (row.status as PropertyStatus)
+          : "Buy";
 
       const images = row.images ?? [];
 
@@ -61,16 +61,14 @@ export async function getAllProperties(): Promise<Property[]> {
         area: row.area,
         status: normalizedStatus,
         price: row.price,
-        coverImage: images[0] ?? "/placeholder.jpg",
         images,
+        coverImage: images[0] ?? "/placeholder.jpg",
         description: row.description || "",
         featured: row.featured ?? false,
       };
     });
 
-    // Store in cache
     setCache(CACHE_KEY, properties, CACHE_TTL);
-
     return properties;
   } catch (error) {
     console.error("❌ Failed to fetch properties:", error);
@@ -79,17 +77,12 @@ export async function getAllProperties(): Promise<Property[]> {
 }
 
 /**
- * Featured properties (derived)
+ * Featured properties
  */
 export async function getFeaturedProperties(): Promise<Property[]> {
   const all = await getAllProperties();
-
   const featured = all.filter((p) => p.featured);
-  if (featured.length > 0) {
-    return featured.slice(0, 3);
-  }
-
-  return all.slice(0, 3);
+  return featured.length ? featured.slice(0, 3) : all.slice(0, 3);
 }
 
 /**
