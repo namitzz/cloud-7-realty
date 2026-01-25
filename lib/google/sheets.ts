@@ -32,13 +32,12 @@ function getSheetsClient() {
     scopes: ["https://www.googleapis.com/auth/spreadsheets.readonly"],
   });
 
-
   return google.sheets({ version: "v4", auth });
 }
 
 /**
  * Fetch properties from Google Sheets
- * and attach Drive images per property
+ * and attach Google Drive images (IMAGE FLODER column)
  */
 export async function fetchPropertiesFromSheet(): Promise<SheetProperty[]> {
   const sheets = getSheetsClient();
@@ -51,21 +50,18 @@ export async function fetchPropertiesFromSheet(): Promise<SheetProperty[]> {
     throw new Error("Missing GOOGLE_SHEET_ID");
   }
 
-
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId,
-    range: "Projects!A2:I", // A–I includes Featured column
+    range: "Projects!A2:I", // A–I (IMAGE FLODER = G, FEATURED = I)
   });
 
   const rows = res.data.values ?? [];
 
-
   return Promise.all(
     rows.map(async (row) => {
-      const folderName = row[6]?.toString().trim();
+      const folderName = row[6]?.toString().trim(); // IMAGE FLODER (column G)
 
       const rawFeatured = row[8];
-
       const featured =
         typeof rawFeatured === "boolean"
           ? rawFeatured
@@ -81,6 +77,7 @@ export async function fetchPropertiesFromSheet(): Promise<SheetProperty[]> {
         status: row[4]?.toString().trim() ?? "",
         price: row[5]?.toString().trim() ?? "",
 
+        // ✅ Google Drive images wired here
         images: folderName
           ? await getImagesFromFolder(folderName)
           : [],
