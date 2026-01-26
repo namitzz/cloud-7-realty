@@ -15,30 +15,24 @@ export default function Hero() {
   };
 
   return (
-    <section
-      className="
-        relative
-        min-h-[85vh] sm:min-h-[800px] lg:min-h-[100vh]
-        flex flex-col items-center justify-center
-        text-white overflow-hidden
-      "
-    >
-      {/* Fullscreen video */}
+    <section className="relative min-h-[85vh] sm:min-h-[800px] lg:min-h-[100vh] flex flex-col items-center justify-center text-white overflow-hidden">
+      {/* 🎥 Video background (mobile zoom-out fix) */}
       <video
         autoPlay
         loop
         muted
         playsInline
-        className="absolute inset-0 h-full w-full object-cover"
+        className="
+          absolute inset-0 h-full w-full
+          object-contain sm:object-cover
+          bg-black
+        "
       >
         <source src="/Cloud 7.mp4" type="video/mp4" />
       </video>
 
-      {/* Overlay (helps mobile readability only) */}
-      <div className="absolute inset-0 bg-black/25 sm:bg-black/20 lg:bg-transparent z-10" />
-
       {/* Logo */}
-      <div className="absolute top-5 sm:top-8 left-1/2 -translate-x-1/2 z-30">
+      <div className="absolute top-8 left-1/2 -translate-x-1/2 z-30">
         <Link href="/" aria-label="Home">
           <Image
             src="/logo.png"
@@ -46,20 +40,13 @@ export default function Hero() {
             width={220}
             height={80}
             priority
-            className="h-[48px] sm:h-[60px] w-auto"
+            className="h-[52px] sm:h-[60px] w-auto"
           />
         </Link>
       </div>
 
       {/* Search Section */}
-      <div
-        className="
-          relative z-20
-          mt-28 sm:mt-36
-          flex flex-col items-center justify-center
-          px-4
-        "
-      >
+      <div className="relative z-20 mt-32 sm:mt-36 flex flex-col items-center justify-center px-4 w-full">
         <div className="relative w-full max-w-[750px]">
           <input
             type="text"
@@ -70,11 +57,10 @@ export default function Hero() {
               if (e.key === "Enter") handleSearch();
             }}
             className="
-              w-full
-              rounded-full
+              w-full rounded-full
               bg-white/20 backdrop-blur-xl backdrop-saturate-150
-              px-6 sm:px-8 py-4 pr-14
-              text-[16px] sm:text-[17px]
+              px-6 sm:px-8 py-3 sm:py-4 pr-14
+              text-[15px] sm:text-[17px]
               text-white placeholder-white/90
               shadow-[0_4px_30px_rgba(0,0,0,0.1)]
               focus:outline-none focus:ring-0
@@ -84,12 +70,7 @@ export default function Hero() {
 
           <button
             onClick={handleSearch}
-            className="
-              absolute right-2 top-1/2 -translate-y-1/2
-              rounded-full bg-transparent
-              p-3 sm:p-4
-              text-white hover:opacity-80 transition
-            "
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-transparent p-3 sm:p-4 text-white hover:opacity-80 transition"
             aria-label="Search"
           >
             <svg
@@ -109,7 +90,7 @@ export default function Hero() {
         </div>
 
         {/* Scroll indicator (hide on very small screens) */}
-        <div className="mt-12 sm:mt-16 hidden sm:flex justify-center">
+        <div className="mt-14 hidden sm:flex justify-center">
           <Link
             href="#properties"
             aria-label="Scroll to properties"
