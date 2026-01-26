@@ -13,6 +13,9 @@ export interface SheetProperty {
   featured: boolean;
 }
 
+/**
+ * Creates a Google Sheets client using a service account
+ */
 function getSheetsClient() {
   const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
   const key = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n");
@@ -32,6 +35,9 @@ function getSheetsClient() {
   return google.sheets({ version: "v4", auth });
 }
 
+/**
+ * Fetch properties from Google Sheets
+ */
 export async function fetchPropertiesFromSheet(): Promise<SheetProperty[]> {
   const sheets = getSheetsClient();
 
@@ -53,14 +59,9 @@ export async function fetchPropertiesFromSheet(): Promise<SheetProperty[]> {
   return Promise.all(
     rows.map(async (row) => {
       const folderName = row[6]
-  ?.toString()
-  .replace(/\s+/g, " ")
-  .trim();
-
-      const folderName =
-        rawFolder && rawFolder !== "." && rawFolder !== "-"
-          ? rawFolder
-          : null;
+        ?.toString()
+        .replace(/\s+/g, " ")
+        .trim();
 
       const rawFeatured = row[8];
       const featured =
@@ -70,6 +71,11 @@ export async function fetchPropertiesFromSheet(): Promise<SheetProperty[]> {
           ? rawFeatured.trim().toLowerCase() === "true"
           : false;
 
+      // ✅ FIX: declare images BEFORE return
+      const images = folderName
+        ? await getImagesFromFolder(folderName)
+        : [];
+
       return {
         id: row[0]?.toString().trim() ?? "",
         title: row[1]?.toString().trim() ?? "",
@@ -77,20 +83,7 @@ export async function fetchPropertiesFromSheet(): Promise<SheetProperty[]> {
         area: row[3]?.toString().trim() ?? "",
         status: row[4]?.toString().trim() ?? "",
         price: row[5]?.toString().trim() ?? "",
-
-      const images = folderName
-  ? await getImagesFromFolder(folderName)
-  : [];
-
-console.log("IMAGES FOR", folderName, images);
-
-return {
-  ...
-  images,
-};
-
-
-
+        images,
         description: row[7]?.toString().trim() ?? "",
         featured,
       };
