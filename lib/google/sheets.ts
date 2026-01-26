@@ -52,7 +52,11 @@ export async function fetchPropertiesFromSheet(): Promise<SheetProperty[]> {
 
   return Promise.all(
     rows.map(async (row) => {
-      const rawFolder = row[6]?.toString().trim();
+      const folderName = row[6]
+  ?.toString()
+  .replace(/\s+/g, " ")
+  .trim();
+
       const folderName =
         rawFolder && rawFolder !== "." && rawFolder !== "-"
           ? rawFolder
