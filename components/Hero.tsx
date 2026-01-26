@@ -15,21 +15,31 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative min-h-[85vh] sm:min-h-[800px] lg:min-h-[100vh] flex flex-col items-center justify-center text-white overflow-hidden">
-      {/* 🎥 Video background (mobile zoom-out fix) */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
+    <section className="relative min-h-[100svh] flex flex-col items-center justify-center text-white overflow-hidden">
+      {/* Video wrapper */}
+      <div
         className="
-          absolute inset-0 h-full w-full
-          object-contain sm:object-cover
-          bg-black
+          absolute inset-0
+          bg-gradient-to-b
+          from-[#2a2f33]
+          via-[#3a3f44]
+          to-[#2a2f33]
+          sm:bg-none
         "
       >
-        <source src="/Cloud 7.mp4" type="video/mp4" />
-      </video>
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="
+            absolute inset-0 h-full w-full
+            object-contain sm:object-cover
+          "
+        >
+          <source src="/Cloud 7.mp4" type="video/mp4" />
+        </video>
+      </div>
 
       {/* Logo */}
       <div className="absolute top-8 left-1/2 -translate-x-1/2 z-30">
@@ -40,13 +50,13 @@ export default function Hero() {
             width={220}
             height={80}
             priority
-            className="h-[52px] sm:h-[60px] w-auto"
+            className="h-[56px] sm:h-[60px] w-auto"
           />
         </Link>
       </div>
 
-      {/* Search Section */}
-      <div className="relative z-20 mt-32 sm:mt-36 flex flex-col items-center justify-center px-4 w-full">
+      {/* Search */}
+      <div className="relative z-20 mt-40 sm:mt-36 flex flex-col items-center px-4 w-full">
         <div className="relative w-full max-w-[750px]">
           <input
             type="text"
@@ -57,20 +67,28 @@ export default function Hero() {
               if (e.key === "Enter") handleSearch();
             }}
             className="
-              w-full rounded-full
-              bg-white/20 backdrop-blur-xl backdrop-saturate-150
-              px-6 sm:px-8 py-3 sm:py-4 pr-14
-              text-[15px] sm:text-[17px]
-              text-white placeholder-white/90
-              shadow-[0_4px_30px_rgba(0,0,0,0.1)]
-              focus:outline-none focus:ring-0
+              w-full
+              rounded-full
+              bg-white/25
+              backdrop-blur-xl
+              px-6 sm:px-8
+              py-4
+              pr-14
+              text-[16px]
+              text-white
+              placeholder-white/90
+              shadow-[0_8px_40px_rgba(0,0,0,0.2)]
+              focus:outline-none
             "
-            aria-label="Search properties"
           />
 
           <button
             onClick={handleSearch}
-            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-transparent p-3 sm:p-4 text-white hover:opacity-80 transition"
+            className="
+              absolute right-2 top-1/2 -translate-y-1/2
+              rounded-full p-3 text-white
+              hover:opacity-80 transition
+            "
             aria-label="Search"
           >
             <svg
@@ -89,14 +107,10 @@ export default function Hero() {
           </button>
         </div>
 
-        {/* Scroll indicator (hide on very small screens) */}
-        <div className="mt-14 hidden sm:flex justify-center">
-          <Link
-            href="#properties"
-            aria-label="Scroll to properties"
-            className="group inline-flex flex-col items-center"
-          >
-            <div className="flex h-16 w-10 items-start justify-center rounded-full border-2 border-white/50 p-2">
+        {/* Scroll indicator */}
+        <div className="mt-14 sm:mt-16">
+          <Link href="#properties" aria-label="Scroll">
+            <div className="flex h-14 w-9 items-start justify-center rounded-full border border-white/40 p-2">
               <div className="h-2 w-2 animate-bounce rounded-full bg-white"></div>
             </div>
           </Link>
