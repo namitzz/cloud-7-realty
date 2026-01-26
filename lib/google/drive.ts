@@ -41,6 +41,9 @@ export async function getImagesFromFolder(
   folderName: string
 ): Promise<string[]> {
   try {
+    console.log("ENV DEBUG → GOOGLE_DRIVE_FOLDER_ID =", process.env.GOOGLE_DRIVE_FOLDER_ID);
+    console.log("ENV DEBUG → ALL ENV KEYS =", Object.keys(process.env));
+
     console.log("📂 DRIVE START →", folderName);
 
     // 🚫 block invalid names
