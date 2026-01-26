@@ -74,16 +74,17 @@ export async function fetchPropertiesFromSheet(): Promise<SheetProperty[]> {
         status: row[4]?.toString().trim() ?? "",
         price: row[5]?.toString().trim() ?? "",
 
-       const images = folderName
+      const images = folderName
   ? await getImagesFromFolder(folderName)
   : [];
 
-console.log("DRIVE IMAGES FOR", folderName, images.length);
+console.log("IMAGES FOR", folderName, images);
 
 return {
   ...
   images,
 };
+
 
 
         description: row[7]?.toString().trim() ?? "",
