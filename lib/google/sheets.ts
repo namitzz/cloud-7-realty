@@ -71,10 +71,12 @@ export async function fetchPropertiesFromSheet(): Promise<SheetProperty[]> {
           ? rawFeatured.trim().toLowerCase() === "true"
           : false;
 
-      // ✅ FIX: declare images BEFORE return
       const images = folderName
-        ? await getImagesFromFolder(folderName)
-        : [];
+  ? await getImagesFromFolder(folderName)
+  : [];
+
+console.log("DRIVE CHECK →", folderName, images.length, images);
+
 
       return {
         id: row[0]?.toString().trim() ?? "",
