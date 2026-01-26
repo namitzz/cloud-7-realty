@@ -15,34 +15,27 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative min-h-[100svh] flex flex-col items-center justify-center text-white overflow-hidden">
-      {/* Video wrapper */}
-      <div
+    <section className="relative flex min-h-[85vh] sm:min-h-[800px] lg:min-h-screen items-center justify-center overflow-hidden text-white">
+      {/* 🎥 Background Video */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
         className="
-          absolute inset-0
-          bg-gradient-to-b
-          from-[#2a2f33]
-          via-[#3a3f44]
-          to-[#2a2f33]
-          sm:bg-none
+          absolute inset-0 h-full w-full object-cover
+          object-[center_40%]
+          sm:object-center
         "
       >
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="
-            absolute inset-0 h-full w-full
-            object-contain sm:object-cover
-          "
-        >
-          <source src="/Cloud 7.mp4" type="video/mp4" />
-        </video>
-      </div>
+        <source src="/Cloud 7.mp4" type="video/mp4" />
+      </video>
 
-      {/* Logo */}
-      <div className="absolute top-8 left-1/2 -translate-x-1/2 z-30">
+      {/* 🌫 Mobile readability gradient */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/70 sm:hidden" />
+
+      {/* 🧭 Logo */}
+      <div className="absolute top-6 left-1/2 z-30 -translate-x-1/2">
         <Link href="/" aria-label="Home">
           <Image
             src="/logo.png"
@@ -50,46 +43,40 @@ export default function Hero() {
             width={220}
             height={80}
             priority
-            className="h-[56px] sm:h-[60px] w-auto"
+            className="h-[52px] w-auto sm:h-[60px]"
           />
         </Link>
       </div>
 
-      {/* Search */}
-      <div className="relative z-20 mt-40 sm:mt-36 flex flex-col items-center px-4 w-full">
+      {/* 🔍 Content */}
+      <div className="relative z-20 mt-28 flex w-full flex-col items-center px-4 sm:mt-36">
+        {/* Search */}
         <div className="relative w-full max-w-[750px]">
           <input
             type="text"
             placeholder="Search properties, locations, communities..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleSearch();
-            }}
+            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+            aria-label="Search properties"
             className="
-              w-full
-              rounded-full
-              bg-white/25
-              backdrop-blur-xl
+              w-full rounded-full
+              bg-neutral-800/70 sm:bg-white/20
+              backdrop-blur-md
               px-6 sm:px-8
-              py-4
+              py-3 sm:py-4
               pr-14
-              text-[16px]
-              text-white
-              placeholder-white/90
-              shadow-[0_8px_40px_rgba(0,0,0,0.2)]
+              text-[15px] sm:text-[17px]
+              text-white placeholder-white/80
+              shadow-lg
               focus:outline-none
             "
           />
 
           <button
             onClick={handleSearch}
-            className="
-              absolute right-2 top-1/2 -translate-y-1/2
-              rounded-full p-3 text-white
-              hover:opacity-80 transition
-            "
             aria-label="Search"
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-3 text-white opacity-80 transition hover:opacity-100"
           >
             <svg
               className="h-5 w-5"
@@ -107,9 +94,13 @@ export default function Hero() {
           </button>
         </div>
 
-        {/* Scroll indicator */}
-        <div className="mt-14 sm:mt-16">
-          <Link href="#properties" aria-label="Scroll">
+        {/* ⬇ Scroll Indicator */}
+        <div className="mt-12 sm:mt-16">
+          <Link
+            href="#properties"
+            aria-label="Scroll to properties"
+            className="group flex flex-col items-center"
+          >
             <div className="flex h-14 w-9 items-start justify-center rounded-full border border-white/40 p-2">
               <div className="h-2 w-2 animate-bounce rounded-full bg-white"></div>
             </div>
