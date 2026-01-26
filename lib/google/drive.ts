@@ -40,13 +40,8 @@ export async function getImagesFromFolder(
   folderName: string
 ): Promise<string[]> {
   try {
-    // ✅ HARD BLOCK invalid folder names
-    if (
-      !folderName ||
-      folderName === "." ||
-      folderName === "-" ||
-      folderName.trim() === ""
-    ) {
+    // ❌ block bad names
+    if (!folderName || folderName.trim() === "-" || folderName.trim() === ".") {
       return [];
     }
 
@@ -58,27 +53,38 @@ export async function getImagesFromFolder(
 
     const drive = getDriveClient();
     const rootFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
-
     if (!rootFolderId) {
       return [];
     }
 
-    const folderRes = await drive.files.list({
+    // 1️⃣ list all subfolders under root
+    const foldersRes = await drive.files.list({
       q: `'${rootFolderId}' in parents 
-          and name contains '${folderName}'
- 
-          and mimeType='application/vnd.google-apps.folder' 
+          and mimeType='application/vnd.google-apps.folder'
           and trashed=false`,
-      fields: "files(id)",
+      fields: "files(id, name)",
+      pageSize: 100,
     });
 
-    const folder = folderRes.data.files?.[0];
-    if (!folder?.id) {
+    const folders = foldersRes.data.files ?? [];
+
+    // 2️⃣ normalize names
+    const normalize = (s: string) =>
+      s.trim().toLowerCase().replace(/\s+/g, " ");
+
+    // 3️⃣ find matching folder
+    const target = folders.find(
+      (f) => normalize(f.name) === normalize(folderName)
+    );
+
+    if (!target?.id) {
+      console.log("DRIVE MISS →", folderName);
       return [];
     }
 
+    // 4️⃣ list images inside folder ✅ FIXED LINE
     const imagesRes = await drive.files.list({
-      q: `'${folder.id}' in parents 
+      q: `'${target.id}' in parents 
           and mimeType contains 'image/' 
           and trashed=false`,
       fields: "files(id)",
@@ -87,18 +93,21 @@ export async function getImagesFromFolder(
     });
 
     const images =
-  imagesRes.data.files?.map(
-    (file) => `https://drive.google.com/uc?export=view&id=${file.id}`
-  ) ?? [];
-
+      imagesRes.data.files?.map(
+        (file) =>
+          `https://drive.google.com/uc?export=view&id=${file.id}`
+      ) ?? [];
 
     imageCache.set(folderName, {
       images,
       expiresAt: now + CACHE_TTL,
     });
 
+    console.log("DRIVE OK →", folderName, images.length);
+
     return images;
-  } catch {
+  } catch (err) {
+    console.error("DRIVE ERROR →", folderName, err);
     return [];
   }
 }
