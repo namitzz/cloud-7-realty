@@ -41,18 +41,14 @@ export async function getImagesFromFolder(
   folderName: string
 ): Promise<string[]> {
   try {
-    console.log("ENV DEBUG → GOOGLE_DRIVE_FOLDER_ID =", process.env.GOOGLE_DRIVE_FOLDER_ID);
-    console.log("ENV DEBUG → ALL ENV KEYS =", Object.keys(process.env));
-
     console.log("📂 DRIVE START →", folderName);
 
-    // 🚫 block invalid names
     if (!folderName || folderName.trim() === "-" || folderName.trim() === ".") {
       console.log("⛔ DRIVE SKIP (invalid name)");
       return [];
     }
 
-    // 🔁 cache
+    // Cache
     const now = Date.now();
     const cached = imageCache.get(folderName);
     if (cached && cached.expiresAt > now) {
@@ -83,19 +79,13 @@ export async function getImagesFromFolder(
 
     const folders = foldersRes.data.files ?? [];
 
-    console.log(
-      "📦 DRIVE ROOT SUBFOLDERS →",
-      folders.map((f) => f.name)
-    );
+    console.log("📦 DRIVE ROOT SUBFOLDERS →", folders.map((f) => f.name));
 
-    /**
-     * 2️⃣ Normalize names (IMPORTANT)
-     */
     const normalize = (s: string) =>
       s.trim().toLowerCase().replace(/\s+/g, " ");
 
     /**
-     * 3️⃣ Find matching folder
+     * 2️⃣ Find matching folder
      */
     const target = folders.find(
       (f) => normalize(f.name) === normalize(folderName)
@@ -109,31 +99,25 @@ export async function getImagesFromFolder(
     console.log("✅ DRIVE FOLDER FOUND →", target.name, target.id);
 
     /**
-     * 4️⃣ List images inside folder
+     * 3️⃣ List images inside folder
      */
     const imagesRes = await drive.files.list({
       q: `'${target.id}' in parents 
-          and mimeType contains 'image/' 
+          and (mimeType='image/jpeg' or mimeType='image/png' or mimeType='image/webp')
           and trashed=false`,
-      fields: "files(id, name)",
+      fields: "files(id, name, mimeType)",
       orderBy: "name",
-      pageSize: 50,
+      pageSize: 100,
     });
 
     const files = imagesRes.data.files ?? [];
 
-    console.log(
-      "🖼️ DRIVE FILES →",
-      files.map((f) => f.name)
-    );
+    console.log("🖼️ DRIVE FILES →", files.map((f) => f.name));
 
     /**
-     * 5️⃣ Convert to public URLs
+     * 4️⃣ Convert to PROXY URLs (important!)
      */
-    const images = files.map(
-      (file) =>
-        `https://drive.google.com/uc?export=view&id=${file.id}`
-    );
+    const images = files.map((file) => `/api/image?id=${file.id}`);
 
     console.log("🎉 DRIVE OK →", folderName, images.length);
 
