@@ -65,7 +65,8 @@ export async function getImagesFromFolder(
 
     const folderRes = await drive.files.list({
       q: `'${rootFolderId}' in parents 
-          and name='${folderName}' 
+          and name contains '${folderName}'
+ 
           and mimeType='application/vnd.google-apps.folder' 
           and trashed=false`,
       fields: "files(id)",
