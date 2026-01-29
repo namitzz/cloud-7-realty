@@ -15,15 +15,30 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative flex min-h-[85vh] sm:min-h-[800px] lg:min-h-screen items-center justify-center overflow-hidden text-white">
-      {/* 🎥 Background Video (responsive sources) */}
+    <section
+      className="
+        relative flex
+        min-h-[100svh]
+        sm:min-h-[800px]
+        lg:min-h-screen
+        items-center justify-center
+        overflow-hidden
+        bg-black
+        text-white
+      "
+    >
+      {/* 🎥 Background Video (mobile + desktop) */}
       <video
         autoPlay
         loop
         muted
         playsInline
+        preload="auto"
         className="
-          absolute inset-0 h-full w-full object-cover
+          absolute inset-0
+          h-full w-full
+          min-h-full min-w-full
+          object-cover
           object-[center_40%]
           sm:object-center
         "
@@ -43,15 +58,15 @@ export default function Hero() {
         />
       </video>
 
-      {/* 🌫 Mobile readability gradient */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/70 sm:hidden" />
+      {/* 🌫 Mobile readability overlay */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/80 sm:hidden" />
 
       {/* 🧭 Logo */}
       <div className="absolute top-6 left-1/2 z-30 -translate-x-1/2">
         <Link href="/" aria-label="Home">
           <Image
             src="/logo.png"
-            alt="Logo"
+            alt="Cloud Seven Realty"
             width={220}
             height={80}
             priority
@@ -73,14 +88,14 @@ export default function Hero() {
             aria-label="Search properties"
             className="
               w-full rounded-full
-              bg-neutral-800/70 sm:bg-white/20
+              bg-neutral-900/70 sm:bg-white/20
               backdrop-blur-md
               px-6 sm:px-8
               py-3 sm:py-4
               pr-14
               text-[15px] sm:text-[17px]
               text-white placeholder-white/80
-              shadow-lg
+              shadow-xl
               focus:outline-none
             "
           />
@@ -88,7 +103,15 @@ export default function Hero() {
           <button
             onClick={handleSearch}
             aria-label="Search"
-            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-3 text-white opacity-80 transition hover:opacity-100"
+            className="
+              absolute right-2 top-1/2 -translate-y-1/2
+              rounded-full
+              p-3
+              text-white
+              opacity-80
+              transition
+              hover:opacity-100
+            "
           >
             <svg
               className="h-5 w-5"
