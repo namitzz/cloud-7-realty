@@ -7,7 +7,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata: Metadata = {
   title: "Cloud Seven Realty - Premium Projects & Properties",
-  description: "Discover premium real estate projects and properties with Cloud Seven Realty. Verified titles, on-ground team, and instant WhatsApp support.",
+  description:
+    "Discover premium real estate projects and properties with Cloud Seven Realty. Verified titles, on-ground team, and instant WhatsApp support.",
   keywords: ["real estate", "properties", "projects", "land", "buy", "rent"],
 };
 
@@ -17,18 +18,29 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const GA_MEASUREMENT_ID = process.env.GA_MEASUREMENT_ID;
-  
+
   return (
     <html lang="en">
       <head>
+        {/* Fonts */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet" />
-        
-        {/* Google Analytics - Add your GA_MEASUREMENT_ID to .env */}
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;700&display=swap"
+          rel="stylesheet"
+        />
+
+        {/* Google Analytics */}
         {GA_MEASUREMENT_ID && (
           <>
-            <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} />
+            <script
+              async
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+            />
             <script
               dangerouslySetInnerHTML={{
                 __html: `
@@ -42,9 +54,15 @@ export default function RootLayout({
           </>
         )}
       </head>
+
       <body className="font-sans antialiased">
         <Navbar />
-        <main className="min-h-screen">{children}</main>
+
+        {/* ✅ Default site background (AUTO) */}
+        <main className="min-h-screen bg-neutral-100">
+          {children}
+        </main>
+
         <Footer />
         <Analytics />
         <SpeedInsights />
