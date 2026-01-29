@@ -16,7 +16,7 @@ export default function Hero() {
 
   return (
     <section className="relative flex min-h-[85vh] sm:min-h-[800px] lg:min-h-screen items-center justify-center overflow-hidden text-white">
-      {/* 🎥 Background Video */}
+      {/* 🎥 Background Video (responsive sources) */}
       <video
         autoPlay
         loop
@@ -28,7 +28,19 @@ export default function Hero() {
           sm:object-center
         "
       >
-        <source src="/Cloud 7.mp4" type="video/mp4" />
+        {/* Mobile video */}
+        <source
+          src="/mobile.mp4"
+          type="video/mp4"
+          media="(max-width: 640px)"
+        />
+
+        {/* Desktop / tablet video */}
+        <source
+          src="/Cloud 7.mp4"
+          type="video/mp4"
+          media="(min-width: 641px)"
+        />
       </video>
 
       {/* 🌫 Mobile readability gradient */}
