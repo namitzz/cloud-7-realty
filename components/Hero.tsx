@@ -27,13 +27,14 @@ export default function Hero() {
         text-white
       "
     >
-      {/* 🎥 Background Video (mobile + desktop) */}
+      {/* 🎥 Background Video (mobile-safe with poster fallback) */}
       <video
         autoPlay
         loop
         muted
         playsInline
-        preload="auto"
+        preload="metadata"
+        poster="/hero-poster-mobile.jpg"
         className="
           absolute inset-0
           h-full w-full
