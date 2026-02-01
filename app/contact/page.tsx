@@ -180,7 +180,7 @@ export default function ContactPage() {
                 </p>
 
                 <a
-                  href="https://www.google.com/maps?ll=34.075628,74.810624&z=14&t=m&hl=en&gl=US&mapclient=apiv3"
+                  href="https://maps.app.goo.gl/aeZG34CPvbbfgCi67"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-block mt-3 text-sm text-luxury-gold hover:underline"
